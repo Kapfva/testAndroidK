@@ -7,14 +7,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testandroidk.model.Person
 import com.google.firebase.database.*
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class activity_personList : AppCompatActivity() {
 
-    private val db = Firebase.firestore
+    private lateinit var db : FirebaseFirestore
     private lateinit var personRecyclerView: RecyclerView
     private lateinit var personMutableList: MutableList<Person>
+    private lateinit var personAdapter: PersonAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,20 +27,35 @@ class activity_personList : AppCompatActivity() {
         personRecyclerView.setHasFixedSize(true)
 
         personMutableList= mutableListOf<Person>()
-        getPersonData()
+
+        personAdapter = PersonAdapter(personMutableList)
+
+        personRecyclerView.adapter = personAdapter
+
     }
 
-    private fun getPersonData() {
+    private fun EventChangeListener(){
 
-        val dbref = db.collection("users")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").
+                addSnapshotListener(object :EventListener<QuerySnapshot>{
+                    override fun onEvent(
+                        value: QuerySnapshot?,
+                        error: FirebaseFirestoreException?
+                    ) {
+                       if (error != null){
+                           Log.e("FirestoreError", error.message.toString())
+                           return
 
-                }
-            }
-            .addOnFailureListener { exception ->
-            }
+                       }
+                        for (dc: DocumentChange in value?.documentChanges!!){
+                            if(dc.type == DocumentChange.Type.ADDED){
+                                personMutableList.add(dc.document.toObject(Person::class.java))
+                            }
+                        }
+                        personAdapter.notifyDataSetChanged()
+                    }
 
+                })
     }
 }
