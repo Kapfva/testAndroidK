@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.testandroidk">
-    //PERMISO INTERNET
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestAndroidK">
         <activity
+            android:name=".activity_personList"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -20,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
