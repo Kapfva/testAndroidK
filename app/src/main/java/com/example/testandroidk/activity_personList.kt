@@ -49,6 +49,7 @@ class activity_personList : AppCompatActivity() {
 
                        }
                         for (dc: DocumentChange in value?.documentChanges!!){
+
                             if(dc.type == DocumentChange.Type.ADDED){
                                 personMutableList.add(dc.document.toObject(Person::class.java))
                             }
